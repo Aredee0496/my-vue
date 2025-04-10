@@ -4,12 +4,13 @@
       <a-card :bordered="true" style="border: 2px solid #1890ff;">
         <template #cover>
           <img :src="`http://localhost:3000/images/${product.image}`" alt="Product Image"
-            style="height: 200px; object-fit: cover;" />
+            style="height: 200px; height: auto;  object-fit: cover;" />
         </template>
 
         <p>{{ product.name }}</p>
         <p>ราคา: {{ product.price }} บาท</p>
-        <p>จำนวน: {{ product.quantity }} ชิ้น</p>
+        <p>จำนวนในคลัง: {{ product.quantity }} ชิ้น</p>
+        <a-input-number v-model:value="quantity" :min="1" :max="product.quantity" style="width: 100px;" />
         <div style="text-align: center;">
           <a-button type="primary" @click="addToCart(product)">เพิ่มลงตะกร้า</a-button>
         </div>
@@ -27,10 +28,12 @@ import { useCartStore } from '../stores/cart'
 const cartStore = useCartStore()
 
 const products = ref([]);
-const token = localStorage.getItem('token');
+const quantity = ref(1);
 
 const getProducts = async () => {
-  const response = await apiservice.fetchProducts(token);
+  const response = await apiservice.fetchProducts();
+  console.log("get product before api ", response);
+
   if (response.status === 200) {
     products.value = response.data;
     console.log('Products:', products.value);
@@ -44,9 +47,14 @@ const getProducts = async () => {
 }
 
 const addToCart = (products) => {
-  cartStore.AddToCart(products);
-  console.log('เพิ่มสินค้า ', products);
+  const items = {
+    ...products,
+    quantity: quantity.value,
+    totalPrice: quantity.value*products.price
+  };
+  cartStore.AddToCart(items);
 }
+
 onMounted(() => {
   getProducts();
 });

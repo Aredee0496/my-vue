@@ -23,17 +23,32 @@
           </template>
           <router-link to="/cart" style="color: inherit;">Cart</router-link>
         </a-menu-item>
+        <a-menu-item key="4" @click="logout">
+          <template #icon>
+            <LogoutOutlined />
+          </template>
+          Logout
+        </a-menu-item>
       </a-menu>
     </a-layout-sider>
     <a-layout-content style="padding: 24px; background: #fff; ">
-        <router-view />
+      <router-view />
     </a-layout-content>
   </a-layout>
 </template>
 
 <script setup>
-import { HomeOutlined, ShoppingOutlined, ShoppingCartOutlined } from '@ant-design/icons-vue';
+import { useRouter } from 'vue-router';
+import { HomeOutlined, ShoppingOutlined, ShoppingCartOutlined, LogoutOutlined } from '@ant-design/icons-vue';
+
+const router = useRouter();
+
+const logout = () => {
+  localStorage.removeItem('user');
+  router.push('/');
+}
 </script>
+
 
 <style scoped>
 /* เพิ่ม styles เพิ่มเติม */
