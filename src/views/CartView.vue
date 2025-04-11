@@ -19,25 +19,43 @@
         <a-button @click="removeItem(item._id)" danger>ลบสินค้า</a-button>
       </a-col>
     </a-row>
-
     <div v-if="cartItems.length > 0" style="margin-top: 20px; text-align: right;">
       <a-typography.Text strong>รวมทั้งหมด: {{ totalPrice }} บาท</a-typography.Text>
       <a-button type="primary" @click="placeOrder" style="margin-left: 10px;">สั่งซื้อ</a-button>
+      <ModalComponent v-model:open="isModalOpen" title="รายละเอียดรายการ" okText="ตกลง" cancelText="ยกเลิก">
+        <div v-if="orderList?.orderItems?.length > 0">
+          <ul>
+            <li v-for="(item, index) in orderList.orderItems" :key="index">
+              {{ item.productId?.name || 'ไม่ทราบชื่อ' }} -
+              จำนวน: {{ item.quantity ?? '-' }} -
+              ราคา: {{ item.totalprice ?? '-' }} บาท
+            </li>
+          </ul>
+          <div>
+            รวมทั้งหมด: {{ orderList.totalPrice }} บาท
+          </div>
+        </div>
+        <div v-else>
+          <p>ยังไม่มีข้อมูลรายการ</p>
+        </div>
+      </ModalComponent>
     </div>
   </a-card>
 </template>
 
-
 <script setup>
-import { computed } from 'vue';
+import { computed, ref, watch } from 'vue';
 import { useCartStore } from '@/stores/cart';
 import apiservice from '@/service/apiservice';
+import ModalComponent from '../components/icons/ModalComponent.vue';
 
 const cartStore = useCartStore()
 
 const totalPrice = computed(() => cartStore.totalPrice);
-
 const cartItems = computed(() => cartStore.items)
+
+const isModalOpen = ref(false);
+const orderList = ref([])
 
 const increase = (productId) => {
   cartStore.IncreaseQuantity(productId);
@@ -52,31 +70,45 @@ const removeItem = (productId) => {
 };
 
 const placeOrder = async () => {
-  console.log("kuay");
-  const user = JSON.parse(localStorage.getItem('user'));
-  const userId = user._id
-  console.log("userID  ", userId);
+  try {
+    const user = JSON.parse(localStorage.getItem('user'));
+    const userId = user._id
 
+    const orderItems = cartItems.value.map(item => ({
+      productId: item._id,
+      quantity: item.quantity,
+      totalprice: item.totalPrice
+    }));
 
-  const orderItems = cartItems.value.map(item => ({
-    productId: item._id,
-    quantity: item.quantity,
-    totalprice: item.totalPrice
-  }));
+    const body = {
+      userId,
+      orderItems,
+      totalPrice: totalPrice.value
+    };
 
-  const body = {
-    userId,
-    orderItems,
-    totalPrice: totalPrice.value
-  };
-
-  const response = await apiservice.createOrder(body);
-  return response;
+    const response = await apiservice.createOrder(body);
+    orderList.value = response.data
+    console.log('orders ที่สั่ง จาก api ', orderList)
+    isModalOpen.value = true;
+  } catch (error) {
+    console.error("เกิดข้อผิดพลาดในการสร้างคำสั่งซื้อ:", error.message);
+    return null;
+  }
 };
 
+const closeModal = () => {
+  console.log('ลบออเดอร์จ้า')
+  isModalOpen.value = false;
+  cartStore.clearCart();
+};
+
+watch(isModalOpen, (newVal, oldVal) => {
+  if (oldVal === true && newVal === false) {
+    closeModal()
+  }
+})
+
 </script>
-
-
 
 <style scoped>
 .cart-image {

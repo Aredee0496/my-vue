@@ -1,32 +1,3 @@
-<script setup>
-// ตัวแปรและฟังก์ชันต่างๆ ของ Vue สามารถใส่ที่นี่
-import { ref } from 'vue';
-import { useRouter } from 'vue-router';
-import { message } from 'ant-design-vue';
-import { useUserStore } from '../stores/user';
-
-const userStore = useUserStore();
-
-const router = useRouter();
-const username = ref('');
-const password = ref('');
-const remember = ref(false);
-
-const onSubmit = async () => {
-  const response = await userStore.login(username.value, password.value);
-  if (response.status === 200) {
-    console.log('Response data:', response.data);
-    message.success('Login successful');
-    router.push('/home');
-  } else {
-    console.error('Login failed:', response);
-    message.error('Login failed');
-  }
-  return response;
-};
-
-</script>
-
 <template>
   <div class="login-container">
     <a-card class="login-card">
@@ -57,6 +28,31 @@ const onSubmit = async () => {
   </div>
 </template>
 
+<script setup>
+import { ref } from 'vue';
+import { useRouter } from 'vue-router';
+import { message } from 'ant-design-vue';
+import { useUserStore } from '../stores/user';
+
+const userStore = useUserStore();
+const router = useRouter();
+const username = ref('');
+const password = ref('');
+const remember = ref(false);
+
+const onSubmit = async () => {
+  const response = await userStore.login(username.value, password.value);
+  if (response.status === 200) {
+    console.log('Response data:', response.data);
+    message.success('Login successful');
+    router.push('/home');
+  } else {
+    console.error('Login failed:', response);
+    message.error('Login failed');
+  }
+  return response;
+};
+</script>
 
 <style scoped>
 .login-container {

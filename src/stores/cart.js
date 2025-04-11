@@ -33,6 +33,10 @@ export const useCartStore = defineStore('cart', {
         item.totalPrice = item.quantity * item.price;
       }
     },
+    clearCart() {
+      console.log('ลบออเดอร์เด้อ')
+      this.items = [];
+    }
   },
   getters: {
     cartCount: (state) => state.items.length,

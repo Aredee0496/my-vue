@@ -23,7 +23,19 @@
           </template>
           <router-link to="/cart" style="color: inherit;">Cart</router-link>
         </a-menu-item>
-        <a-menu-item key="4" @click="logout">
+        <a-menu-item key="4">
+          <template #icon>
+            <OrderedListOutlined style="color: #fff;" />
+          </template>
+          <router-link to="/orders" style="color: inherit;">Orders</router-link>
+        </a-menu-item>
+        <a-menu-item key="5">
+          <template #icon>
+            <EditOutlined style="color: #fff;" />
+          </template>
+          <router-link to="/manage-products" style="color: inherit;">Manage Products</router-link>
+        </a-menu-item>
+        <a-menu-item key="6" @click="logout">
           <template #icon>
             <LogoutOutlined />
           </template>
@@ -39,7 +51,7 @@
 
 <script setup>
 import { useRouter } from 'vue-router';
-import { HomeOutlined, ShoppingOutlined, ShoppingCartOutlined, LogoutOutlined } from '@ant-design/icons-vue';
+import { HomeOutlined, ShoppingOutlined, ShoppingCartOutlined, LogoutOutlined, OrderedListOutlined, EditOutlined } from '@ant-design/icons-vue';
 
 const router = useRouter();
 
