@@ -22,7 +22,7 @@
     <div v-if="cartItems.length > 0" style="margin-top: 20px; text-align: right;">
       <a-typography.Text strong>รวมทั้งหมด: {{ totalPrice }} บาท</a-typography.Text>
       <a-button type="primary" @click="placeOrder" style="margin-left: 10px;">สั่งซื้อ</a-button>
-      <ModalComponent v-model:open="isModalOpen" title="รายละเอียดรายการ" okText="ตกลง" cancelText="ยกเลิก">
+      <ModalComponent v-model:open="isModalOpen" title="รายละเอียดรายการ">
         <div v-if="orderList?.orderItems?.length > 0">
           <ul>
             <li v-for="(item, index) in orderList.orderItems" :key="index">
@@ -97,7 +97,6 @@ const placeOrder = async () => {
 };
 
 const closeModal = () => {
-  console.log('ลบออเดอร์จ้า')
   isModalOpen.value = false;
   cartStore.clearCart();
 };

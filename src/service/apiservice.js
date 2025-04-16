@@ -20,17 +20,9 @@ const login = async (username, password) => {
 const fetchProducts = async () => {
   try {
     const response = await apiService.get('/products')
-    console.log('Response in product: ', response)
     return response.data
-  } catch (error) {
-    console.error('Get products service error:', error)
-    if (error.response) {
-      console.error('Error response:', error.response)
-    }
-    return {
-      success: false,
-      error: error.response?.data || { message: 'Failed to fetch products' },
-    }
+  } catch (err) {
+    throw err.response?.data?.message || err.message;
   }
 }
 
@@ -39,10 +31,49 @@ const createOrder = async (body) => {
     console.log('body   ', body)
     const response = await apiService.post('/orders', body);
     return response.data;
-  } catch (error) {
-    console.error("Error creating order", error);
-    return null;
+  } catch (err) {
+    console.error("Error creating order", err);
+    throw err.response?.data?.message || err.message;
   }
 };
 
-export default { apiService, login, fetchProducts, createOrder }
+const addProduct = async (body) => {
+  try {
+    const response = await apiService.post('/products', body);
+    return response.data;
+  } catch (err) {
+    console.error("Error add products", err);
+    throw err.response?.data?.message || err.message;
+  }
+};
+
+const deleteProduct = async (_id) => {
+  try {
+    const response = await apiService.delete(`/products/${_id}`);
+    return response.data;
+  } catch (err) {
+    console.error("Error delete products", err);
+    throw err.response?.data?.message || err.message;
+  }
+};
+
+const updateProduct = async (_id, body) => {
+  try {
+    const response = await apiService.put(`/products/${_id}`, body);
+    return response.data;
+  } catch (err) {
+    console.error("Error Edit products", err);
+    throw err.response?.data?.message || err.message;
+  }
+};
+
+const fetchOrders= async () => {
+  try {
+    const response = await apiService.get('/orders')
+    return response.data
+  } catch (err) {
+    throw err.response?.data?.message || err.message;
+  }
+};
+
+export default { apiService, login, fetchProducts, createOrder, addProduct, deleteProduct, updateProduct, fetchOrders}

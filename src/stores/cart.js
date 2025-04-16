@@ -34,7 +34,6 @@ export const useCartStore = defineStore('cart', {
       }
     },
     clearCart() {
-      console.log('ลบออเดอร์เด้อ')
       this.items = [];
     }
   },
